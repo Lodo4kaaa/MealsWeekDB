@@ -1,3 +1,53 @@
 // Use DBML to define your database structure
 // Docs: https://dbml.dbdiagram.io/docs
 
+Table ingredient {
+  ingredient_id integer [primary key]
+  name text [not null, unique]  
+}
+
+Table dish {
+  dish_id integer [primary key]
+  name text [not null, unique]
+  description text
+}
+
+table dish_ingredient {
+  dish_id integer
+  ingredient_id integer 
+  amount decimal [not null] // + check > 0
+  unit text [not null]
+  note text
+  indexes {
+    (dish_id, ingredient_id) [pk]
+  }
+}
+
+table week {
+  week_id integer [primary key]
+  active  bool [not null, default: true]
+}
+
+table week_dish {
+  week_id integer 
+  dish_id integer 
+  day_of_week_id integer 
+  indexes {
+    (week_id, dish_id, day_of_week_id) [pk]
+  }
+} 
+
+table day_of_week {
+  day_of_week_id integer [primary key] //1..7
+  name text [not null, unique]
+} 
+
+Ref: "ingredient"."ingredient_id" < "dish_ingredient"."ingredient_id"
+
+Ref: "dish"."dish_id" < "dish_ingredient"."dish_id"
+
+Ref: "week"."week_id" < "week_dish"."week_id"
+
+Ref: "dish"."dish_id" < "week_dish"."dish_id"
+
+Ref: "day_of_week"."day_of_week_id" < "week_dish"."day_of_week_id"
